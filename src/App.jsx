@@ -9,7 +9,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/analyticsadmin" element={<Analytics />} />
+          <Route path="/xtra" element={<Analytics />} />
         </Routes>
       </BrowserRouter>
     </ErrorBoundary>
