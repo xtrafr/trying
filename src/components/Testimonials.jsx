@@ -71,75 +71,62 @@ const Testimonials = () => {
 
   const [selectedImage, setSelectedImage] = useState(null)
   const scrollPositionRef = useRef(0)
-  const previousImageRef = useRef(null)
 
-  // Close lightbox on Escape key and prevent scrolling while preserving scroll position
+  // Handle modal open/close and scroll position
   useEffect(() => {
+    if (!selectedImage) return
+
+    // Save scroll position when opening
+    scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop || 0
+
+    // Prevent scrolling
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
         setSelectedImage(null)
       }
     }
+
+    document.addEventListener('keydown', handleEscape)
     
-    // Opening modal
-    if (selectedImage && !previousImageRef.current) {
-      // Save current scroll position before locking
-      scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-      
-      // Prevent all scrolling
-      document.addEventListener('keydown', handleEscape)
-      document.body.style.overflow = 'hidden'
-      document.body.style.position = 'fixed'
-      document.body.style.top = `-${scrollPositionRef.current}px`
-      document.body.style.width = '100%'
-      document.documentElement.style.overflow = 'hidden'
-      
-      // Stop Lenis smooth scroll if available
-      if (window.lenis) {
-        try { 
-          window.lenis.stop() 
-        } catch (e) {}
-      }
+    // Lock scroll
+    document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollPositionRef.current}px`
+    document.body.style.width = '100%'
+    
+    // Stop Lenis if available
+    if (window.lenis) {
+      try {
+        window.lenis.stop()
+      } catch (e) {}
     }
-    
-    // Closing modal
-    if (!selectedImage && previousImageRef.current) {
-      const savedPosition = scrollPositionRef.current
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
       
-      // Restore body styles
+      // Restore scroll
+      const savedPosition = scrollPositionRef.current
       document.body.style.overflow = ''
       document.body.style.position = ''
       document.body.style.top = ''
       document.body.style.width = ''
-      document.documentElement.style.overflow = ''
       
-      // Restore scroll position immediately
-      window.scrollTo(0, savedPosition)
-      
-      // Resume Lenis smooth scroll if available
-      if (window.lenis) {
-        try { 
-          window.lenis.start()
-          // Restore position with Lenis after a brief delay
-          setTimeout(() => {
-            if (window.lenis) {
-              window.lenis.scrollTo(savedPosition, { immediate: true })
-            }
-          }, 50)
-        } catch (e) {}
-      }
-      
-      document.removeEventListener('keydown', handleEscape)
-    }
-    
-    // Update previous value
-    previousImageRef.current = selectedImage
-    
-    return () => {
-      // Cleanup on unmount
-      if (selectedImage) {
-        document.removeEventListener('keydown', handleEscape)
-      }
+      // Restore scroll position
+      requestAnimationFrame(() => {
+        window.scrollTo(0, savedPosition)
+        
+        // Resume Lenis if available
+        if (window.lenis) {
+          try {
+            window.lenis.start()
+            setTimeout(() => {
+              if (window.lenis) {
+                window.lenis.scrollTo(savedPosition, { immediate: true })
+              }
+            }, 100)
+          } catch (e) {}
+        }
+      })
     }
   }, [selectedImage])
 
@@ -291,13 +278,18 @@ const Testimonials = () => {
       </div>
 
       {/* Image Lightbox Modal */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {selectedImage && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedImage(null)}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setSelectedImage(null)
+              }
+            }}
+            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4"
             style={{ 
               position: 'fixed',
               top: 0,
@@ -306,41 +298,19 @@ const Testimonials = () => {
               bottom: 0,
               width: '100vw',
               height: '100vh',
-              zIndex: 9999,
-              backgroundColor: 'rgba(0, 0, 0, 0.95)',
-              backdropFilter: 'blur(8px)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              padding: '1rem',
-              margin: 0
+              zIndex: 9999
             }}
             data-lenis-prevent
           >
             <button
               onClick={(e) => {
+                e.preventDefault()
                 e.stopPropagation()
                 setSelectedImage(null)
               }}
-              style={{
-                position: 'absolute',
-                top: '1rem',
-                right: '1rem',
-                padding: '0.75rem',
-                backgroundColor: 'rgba(30, 41, 59, 0.8)',
-                borderRadius: '50%',
-                border: 'none',
-                cursor: 'pointer',
-                zIndex: 10000,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'background-color 0.3s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(30, 41, 59, 1)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(30, 41, 59, 0.8)'}
+              className="absolute top-4 right-4 p-3 bg-dark-card/80 hover:bg-dark-card rounded-full transition-all duration-300 z-[10000] cursor-pointer flex items-center justify-center"
               aria-label="Close image"
+              type="button"
             >
               <X className="text-white" size={24} />
             </button>
@@ -351,23 +321,17 @@ const Testimonials = () => {
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={(e) => e.stopPropagation()}
+              className="relative w-full h-full flex items-center justify-center p-8"
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                height: '100%',
                 maxWidth: '100vw',
-                maxHeight: '100vh',
-                padding: '2rem',
-                overflow: 'hidden',
-                position: 'relative'
+                maxHeight: '100vh'
               }}
               data-lenis-prevent
             >
               <img
                 src={selectedImage}
                 alt="Review screenshot"
+                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
                 style={{ 
                   maxWidth: 'calc(100vw - 4rem)',
                   maxHeight: 'calc(100vh - 4rem)',
@@ -376,14 +340,15 @@ const Testimonials = () => {
                   objectFit: 'contain',
                   display: 'block',
                   margin: '0 auto',
-                  borderRadius: '0.5rem',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                  userSelect: 'none',
-                  pointerEvents: 'none'
+                  userSelect: 'none'
                 }}
                 loading="eager"
                 decoding="async"
                 draggable="false"
+                onError={(e) => {
+                  console.error('Failed to load image:', selectedImage)
+                  e.target.style.display = 'none'
+                }}
               />
             </motion.div>
           </motion.div>
