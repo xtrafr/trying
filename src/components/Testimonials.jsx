@@ -225,6 +225,10 @@ const Testimonials = () => {
                       whileHover={{ scale: 1.02 }}
                       transition={{ duration: 0.3 }}
                       loading="lazy"
+                      onError={(e) => {
+                        console.error('Failed to load image:', testimonial.image)
+                        e.target.style.display = 'none'
+                      }}
                     />
                   </div>
                 )}
