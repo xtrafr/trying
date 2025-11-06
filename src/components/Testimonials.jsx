@@ -70,31 +70,40 @@ const Testimonials = () => {
   ]
 
   const [selectedImage, setSelectedImage] = useState(null)
-  const scrollPositionRef = useRef(0)
 
-  // Handle modal open/close and scroll position
+  // Handle modal open/close - simplified approach
   useEffect(() => {
-    if (!selectedImage) return
+    if (!selectedImage) {
+      // Modal is closed - ensure everything is restored
+      document.body.style.overflow = ''
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      if (window.lenis) {
+        try {
+          window.lenis.start()
+        } catch (e) {}
+      }
+      return
+    }
 
-    // Save scroll position when opening
-    scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop || 0
-
-    // Prevent scrolling
+    // Modal is open
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
         setSelectedImage(null)
       }
     }
 
-    document.addEventListener('keydown', handleEscape)
+    // Save scroll position
+    const scrollY = window.scrollY || window.pageYOffset || 0
     
-    // Lock scroll
+    document.addEventListener('keydown', handleEscape, { passive: true })
+    
+    // Simple scroll lock - don't use position fixed to avoid issues
     document.body.style.overflow = 'hidden'
-    document.body.style.position = 'fixed'
-    document.body.style.top = `-${scrollPositionRef.current}px`
-    document.body.style.width = '100%'
+    document.body.style.position = 'relative'
     
-    // Stop Lenis if available
+    // Stop Lenis completely
     if (window.lenis) {
       try {
         window.lenis.stop()
@@ -105,28 +114,20 @@ const Testimonials = () => {
       document.removeEventListener('keydown', handleEscape)
       
       // Restore scroll
-      const savedPosition = scrollPositionRef.current
       document.body.style.overflow = ''
       document.body.style.position = ''
-      document.body.style.top = ''
-      document.body.style.width = ''
       
-      // Restore scroll position
-      requestAnimationFrame(() => {
-        window.scrollTo(0, savedPosition)
+      // Restore scroll position after a brief delay
+      setTimeout(() => {
+        window.scrollTo(0, scrollY)
         
-        // Resume Lenis if available
+        // Resume Lenis
         if (window.lenis) {
           try {
             window.lenis.start()
-            setTimeout(() => {
-              if (window.lenis) {
-                window.lenis.scrollTo(savedPosition, { immediate: true })
-              }
-            }, 100)
           } catch (e) {}
         }
-      })
+      }, 10)
     }
   }, [selectedImage])
 
@@ -203,7 +204,11 @@ const Testimonials = () => {
                 {testimonial.image && (
                   <div 
                     className="mb-4 rounded-lg overflow-hidden border border-primary/20 cursor-pointer hover:border-primary/50 transition-all duration-300"
-                    onClick={() => setSelectedImage(testimonial.image)}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setSelectedImage(testimonial.image)
+                    }}
                   >
                     <motion.img 
                       src={testimonial.image}
