@@ -1,57 +1,111 @@
-import { motion } from 'framer-motion'
-import { Star, User, Clock } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Star, User, Clock, X } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 const Testimonials = () => {
   const testimonials = [
     {
-      name: 'z3r0',
-      initials: 'JD',
-      role: 'Competitive Player',
+      name: 'Customer',
+      role: 'Unlock All User',
       rating: 5,
-      text: 'Bro this shit is actually insane. Been using it for months and still undetected. The features are crazy good and support always got your back when you need help.',
+      text: 'BEST UNLOCK ! 0 LAG, 100% SAFE BUY IT FOR REAL !!! T',
+      image: '/assets/vouches/ua1.png',
+      product: 'Unlock All',
       color: 'from-blue-500 to-cyan-500'
     },
     {
-      name: 'maverick',
-      initials: 'MK',
-      role: 'Content Creator',
+      name: 'Customer',
+      role: 'Unlock All User',
       rating: 5,
-      text: 'Yo the unlock all feature is perfect for making content. Interface is clean af, runs smooth, and I haven\'t had a single detection issue. Literally couldn\'t ask for better.',
+      text: 'thank you very much for this one! incredible<3',
+      image: '/assets/vouches/ua2.png',
+      product: 'Unlock All',
       color: 'from-purple-500 to-pink-500'
     },
     {
-      name: 'nexxus',
-      initials: 'AL',
-      role: 'Casual Players',
+      name: 'Customer',
+      role: 'Unlock All User',
       rating: 5,
-      text: 'Ngl Xenos completely changed my gameplay. The aimbot is smooth as hell and looks natural. Been rocking it for 6+ months without a ban, highly recommend fr.',
+      text: 'The bests one, helps me alot , thanks for the ua ❤️ 👑 💯',
+      image: '/assets/vouches/ua3.png',
+      product: 'Unlock All',
       color: 'from-primary to-blue-500'
     },
     {
-      name: '0st3r',
-      initials: 'TS',
-      role: 'Casual Player',
+      name: 'Customer',
+      role: 'Unlock All User',
       rating: 5,
-      text: 'Best money I\'ve spent. Spoofer works like a charm and the support team helped me get everything set up. Zero issues, works perfectly every single time. 10/10',
+      text: 'w admins thank you for your support and its 100% real,its worth it',
+      image: '/assets/vouches/ua4.png',
+      product: 'Unlock All',
       color: 'from-green-500 to-emerald-500'
     },
     {
-      name: 'void',
-      initials: 'RW',
-      role: 'Streamer',
+      name: 'Customer',
+      role: 'Private Cheat User',
       rating: 5,
-      text: 'The quality is insane for the price ngl. Skin changer has literally every skin you could want. Setup was easy af and shit just works. Definitely staying long term.',
+      text: 'Thanks so much, works so good, the best support and they helps me alot ♥️',
+      image: '/assets/vouches/private1.png',
+      product: 'Private Cheat',
       color: 'from-orange-500 to-red-500'
     },
     {
-      name: 'n3on',
-      initials: 'NK',
-      role: 'Tournament Player',
+      name: 'Customer',
+      role: 'Private Cheat User',
       rating: 5,
-      text: 'The private cheat is unmatched fr. So many features and completely undetected. Discord community is helpful and active. Worth every penny bro, no cap.',
+      text: '+rep w mans in the fricking chat',
+      image: '/assets/vouches/private2.png',
+      product: 'Private Cheat',
       color: 'from-cyan-500 to-blue-500'
     },
+    {
+      name: 'Customer',
+      role: 'Triggerbot User',
+      rating: 5,
+      text: 'The bests one, helps me alot , thanks for the ua and trigger ❤️',
+      image: '/assets/vouches/trigger.png',
+      product: 'Triggerbot',
+      color: 'from-pink-500 to-purple-500'
+    },
   ]
+
+  const [selectedImage, setSelectedImage] = useState(null)
+
+  // Close lightbox on Escape key and prevent scrolling
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') setSelectedImage(null)
+    }
+    if (selectedImage) {
+      // Prevent all scrolling
+      document.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.width = '100%'
+      document.documentElement.style.overflow = 'hidden'
+      
+      // Stop Lenis smooth scroll if available
+      if (window.lenis) {
+        try { 
+          window.lenis.stop() 
+        } catch (e) {}
+      }
+    }
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = ''
+      document.body.style.position = ''
+      document.body.style.width = ''
+      document.documentElement.style.overflow = ''
+      
+      // Resume Lenis smooth scroll if available
+      if (window.lenis) {
+        try { 
+          window.lenis.start() 
+        } catch (e) {}
+      }
+    }
+  }, [selectedImage])
 
   return (
     <section className="py-32 bg-gradient-to-br from-dark via-dark-lighter to-dark relative overflow-hidden">
@@ -110,24 +164,37 @@ const Testimonials = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300" />
               
               {/* Card */}
-                <div className="relative bg-dark-card/80 backdrop-blur-xl rounded-2xl p-8 transition-all duration-150 shadow-xl hover:shadow-2xl h-full flex flex-col items-stretch text-left min-h-[240px]">
-                {/* Anonymous icon header */}
-                <div className="mb-6 relative z-10 text-center">
-                  <motion.img 
-                    src={`https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(testimonial.name)}`}
-                    alt={`${testimonial.name} avatar`}
-                    className="w-16 h-16 rounded-full shadow-lg group-hover:shadow-xl transition-shadow duration-300 mx-auto bg-dark-card object-cover"
-                    whileHover={{ scale: 1.06 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                  <div className="mt-3">
-                    <div className="text-white font-semibold text-base tracking-wide">{testimonial.name}</div>
-                    <div className="text-gray-500 text-xs">{testimonial.role}</div>
-                  </div>
+                <div className="relative bg-dark-card/80 backdrop-blur-xl rounded-2xl p-6 transition-all duration-150 shadow-xl hover:shadow-2xl h-full flex flex-col items-stretch text-left">
+                {/* Product Category Badge */}
+                <div className="mb-4">
+                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                    testimonial.product === 'Unlock All' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
+                    testimonial.product === 'Private Cheat' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
+                    'bg-pink-500/20 text-pink-400 border border-pink-500/30'
+                  }`}>
+                    {testimonial.product}
+                  </span>
                 </div>
 
+                {/* Screenshot Image */}
+                {testimonial.image && (
+                  <div 
+                    className="mb-4 rounded-lg overflow-hidden border border-primary/20 cursor-pointer hover:border-primary/50 transition-all duration-300"
+                    onClick={() => setSelectedImage(testimonial.image)}
+                  >
+                    <motion.img 
+                      src={testimonial.image}
+                      alt={`${testimonial.product} review screenshot`}
+                      className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+
                 {/* Rating */}
-                <div className="flex gap-1 mb-5 justify-center">
+                <div className="flex gap-1 mb-4 justify-center">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <motion.div
                       key={i}
@@ -136,13 +203,13 @@ const Testimonials = () => {
                       viewport={{ once: true }}
                       transition={{ delay: index * 0.08 + (i * 0.05) }}
                     >
-                      <Star size={18} className="text-yellow-500 fill-yellow-500 drop-shadow-lg" />
+                      <Star size={16} className="text-yellow-500 fill-yellow-500 drop-shadow-lg" />
                     </motion.div>
                   ))}
                 </div>
 
                 {/* Testimonial text */}
-                <p className="text-gray-300 leading-relaxed text-base mt-auto text-center hyphens-auto balance-text" style={{ textJustify: 'inter-word' }}>
+                <p className="text-gray-300 leading-relaxed text-sm mt-auto text-center hyphens-auto balance-text" style={{ textJustify: 'inter-word' }}>
                   {testimonial.text}
                 </p>
               </div>
@@ -182,6 +249,107 @@ const Testimonials = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Image Lightbox Modal */}
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedImage(null)}
+            style={{ 
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              width: '100vw',
+              height: '100vh',
+              zIndex: 9999,
+              backgroundColor: 'rgba(0, 0, 0, 0.95)',
+              backdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+              padding: '1rem',
+              margin: 0
+            }}
+            data-lenis-prevent
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setSelectedImage(null)
+              }}
+              style={{
+                position: 'absolute',
+                top: '1rem',
+                right: '1rem',
+                padding: '0.75rem',
+                backgroundColor: 'rgba(30, 41, 59, 0.8)',
+                borderRadius: '50%',
+                border: 'none',
+                cursor: 'pointer',
+                zIndex: 10000,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background-color 0.3s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(30, 41, 59, 1)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(30, 41, 59, 0.8)'}
+              aria-label="Close image"
+            >
+              <X className="text-white" size={24} />
+            </button>
+
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
+                maxWidth: '100vw',
+                maxHeight: '100vh',
+                padding: '2rem',
+                overflow: 'hidden',
+                position: 'relative'
+              }}
+              data-lenis-prevent
+            >
+              <img
+                src={selectedImage}
+                alt="Review screenshot"
+                style={{ 
+                  maxWidth: 'calc(100vw - 4rem)',
+                  maxHeight: 'calc(100vh - 4rem)',
+                  width: 'auto',
+                  height: 'auto',
+                  objectFit: 'contain',
+                  display: 'block',
+                  margin: '0 auto',
+                  borderRadius: '0.5rem',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                  userSelect: 'none',
+                  pointerEvents: 'none'
+                }}
+                loading="eager"
+                decoding="async"
+                draggable="false"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Section edge fades (smooth background transition) */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-dark to-transparent -z-10" aria-hidden="true" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-dark to-transparent -z-10" aria-hidden="true" />
