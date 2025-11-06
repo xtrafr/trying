@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Star, User, Clock, X } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const Testimonials = () => {
   const testimonials = [
@@ -70,17 +70,27 @@ const Testimonials = () => {
   ]
 
   const [selectedImage, setSelectedImage] = useState(null)
+  const scrollPositionRef = useRef(0)
+  const previousImageRef = useRef(null)
 
-  // Close lightbox on Escape key and prevent scrolling
+  // Close lightbox on Escape key and prevent scrolling while preserving scroll position
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape') setSelectedImage(null)
+      if (e.key === 'Escape') {
+        setSelectedImage(null)
+      }
     }
-    if (selectedImage) {
+    
+    // Opening modal
+    if (selectedImage && !previousImageRef.current) {
+      // Save current scroll position before locking
+      scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+      
       // Prevent all scrolling
       document.addEventListener('keydown', handleEscape)
       document.body.style.overflow = 'hidden'
       document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollPositionRef.current}px`
       document.body.style.width = '100%'
       document.documentElement.style.overflow = 'hidden'
       
@@ -91,18 +101,44 @@ const Testimonials = () => {
         } catch (e) {}
       }
     }
-    return () => {
-      document.removeEventListener('keydown', handleEscape)
+    
+    // Closing modal
+    if (!selectedImage && previousImageRef.current) {
+      const savedPosition = scrollPositionRef.current
+      
+      // Restore body styles
       document.body.style.overflow = ''
       document.body.style.position = ''
+      document.body.style.top = ''
       document.body.style.width = ''
       document.documentElement.style.overflow = ''
+      
+      // Restore scroll position immediately
+      window.scrollTo(0, savedPosition)
       
       // Resume Lenis smooth scroll if available
       if (window.lenis) {
         try { 
-          window.lenis.start() 
+          window.lenis.start()
+          // Restore position with Lenis after a brief delay
+          setTimeout(() => {
+            if (window.lenis) {
+              window.lenis.scrollTo(savedPosition, { immediate: true })
+            }
+          }, 50)
         } catch (e) {}
+      }
+      
+      document.removeEventListener('keydown', handleEscape)
+    }
+    
+    // Update previous value
+    previousImageRef.current = selectedImage
+    
+    return () => {
+      // Cleanup on unmount
+      if (selectedImage) {
+        document.removeEventListener('keydown', handleEscape)
       }
     }
   }, [selectedImage])
