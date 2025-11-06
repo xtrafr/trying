@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Star, User, Clock, X } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 const Testimonials = () => {
   const testimonials = [
@@ -282,9 +283,9 @@ const Testimonials = () => {
         </motion.div>
       </div>
 
-      {/* Image Lightbox Modal */}
-      <AnimatePresence mode="wait">
-        {selectedImage && (
+      {/* Image Lightbox Modal - Using Portal */}
+      {selectedImage && createPortal(
+        <AnimatePresence>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -357,8 +358,9 @@ const Testimonials = () => {
               />
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body
+      )}
 
       {/* Section edge fades (smooth background transition) */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-dark to-transparent -z-10" aria-hidden="true" />
