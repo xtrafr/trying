@@ -1,0 +1,93 @@
+=== PORTFOLIO WEBSITE - ENGLISH TEXT FOR TRANSLATION ===
+
+--- NAVIGATION ---
+Work
+Expertise
+About
+Contact
+
+--- HERO SECTION ---
+Available for projects
+Hey, I'm xtra
+Frontend Developer
+Building fast, modern websites with clean code and smooth animations.
+View Work
+Get in Touch
+Discover
+
+--- ABOUT SECTION ---
+About Me
+I'm xtra, a frontend developer who builds stuff for the web.
+I use React, Next.js, and whatever else makes sense for the project. My focus is on clean animations, fast performance, and interfaces that just work.
+Whether it's cool animations or just making sure everything feels smooth, I keep things simple and polished. Good code shouldn't be complicated.
+When I'm not working, I'm usually playing with new tech or contributing to open source.
+Open for projects
+
+--- ABOUT STATS ---
+Years Experience
+Projects Completed
+Happy Clients
+Technologies Mastered
+
+--- PROJECTS SECTION ---
+Featured Project
+My Work
+Personal Projects
+Show More
+Show Less
+Visit Site
+
+--- EXPERTISE SECTION ---
+What I Use
+Grid
+Carousel
+Cards
+View all technologies
+
+--- CONTACT SECTION ---
+Available for Work
+Let's Talk
+Ready to bring your project to life? Let's create something amazing together.
+Full Name
+Your Name
+Email Address
+your@email.com
+Your Message
+Tell me about your project...
+Send Message
+Sending...
+Message sent!
+Thanks for reaching out. I'll get back to you soon!
+Let's Connect
+Prefer a quick chat?
+Join Discord Server
+or
+Discord Username
+Enter your Discord username
+Submit
+Submitting...
+Great! Joining Discord...
+
+--- FOOTER ---
+Quick Links
+Status
+Available for Work
+Currently accepting freelance projects and collaborations
+Frontend developer crafting exceptional web experiences with modern technologies.
+All rights reserved.
+Built with Next.js & Framer Motion
+
+--- SETTINGS MENU ---
+Settings
+Accent Color
+Custom Color
+Language
+Reset to Defaults
+Color Picker
+Click to pick color
+Hex Code
+Apply
+Quick Presets
+
+--- BUTTON TEXT ---
+Learn More
