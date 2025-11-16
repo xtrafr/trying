@@ -1,0 +1,406 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --accent-color: #0db76b;
+  --bg-primary: 0 0 0;
+  --bg-secondary: 10 10 10;
+  --bg-tertiary: 20 20 20;
+  --text-primary: 245 245 247;
+  --text-secondary: 134 134 139;
+  --border-color: 255 255 255 / 0.08;
+  
+  /* Apple Design System - Soft Colors */
+  --soft-black: rgba(0, 0, 0, 0.85);
+  --soft-white: rgba(255, 255, 255, 0.95);
+  
+  /* Apple Depth Layers */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.2);
+}
+
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, box-shadow;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition-duration: 350ms;
+}
+
+html.light {
+  --bg-primary: 255 255 255;
+  --bg-secondary: 250 250 252;
+  --bg-tertiary: 244 244 248;
+  --text-primary: 15 15 20;
+  --text-secondary: 82 82 91;
+  --border-color: 0 0 0 / 0.1;
+  
+  /* Apple Light Mode Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 80px;
+    scroll-behavior: auto;
+    overscroll-behavior: none;
+  }
+  
+  body {
+    @apply bg-bg text-text;
+    overflow-x: hidden;
+    overscroll-behavior: none;
+  }
+  
+  * {
+    border-color: rgb(var(--border-color));
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  p {
+    line-height: 1.6;
+  }
+
+  /* Apple Typography Scale */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+  }
+
+  * {
+    will-change: auto;
+  }
+
+  .gpu-accelerate {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+}
+
+@layer utilities {
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* ============================================
+     APPLE LIQUID GLASS DESIGN SYSTEM
+     ============================================
+     
+     What is Liquid Glass?
+     ---------------------
+     Apple's signature "frosted glass" effect that creates
+     a premium, futuristic UI with these characteristics:
+     
+     1. Semi-Transparent Frosted Layer (20-40% opacity)
+        - Background is visible but heavily blurred
+        - Creates depth and layering
+     
+     2. Strong Background Blur (20-40px Gaussian)
+        - Apple's signature heavy blur
+        - Soft, diffused, fog-like appearance
+     
+     3. Soft Gloss & Light Reflection
+        - Subtle shine on top edge
+        - Mimics polished glass catching light
+        - Achieved with gradient overlays
+     
+     4. Smooth Large Rounded Corners (16-32px)
+        - Creates organic, friendly feel
+        - Matches iOS/macOS design language
+     
+     5. Very Thin Border (1-1.5px, low-opacity white)
+        - Mimics light refraction at glass edge
+        - Provides subtle definition
+     
+     6. Subtle Inner Glow
+        - Adds depth perception
+        - Creates realistic glass material
+     
+     7. Soft Shadow Beneath
+        - Lifts element off the page
+        - Big, soft, low-opacity shadows
+     
+     Apple Design Principles:
+     ------------------------
+     - Materials behave like real materials
+     - Only 3-4 colors at once for cleanliness
+     - No pure black (#000) or white (#fff)
+     - Heavy blur + translucency for premium feel
+     - Consistent light sources and depth
+     - Smooth, slow, physics-driven animations
+     - Minimal clutter, maximum breathing room
+     - Layered 3D stacking (not flat design)
+     
+     ============================================ */
+
+  .text-gradient {
+    background: linear-gradient(to right, var(--accent-color), var(--accent-color));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: gradient 4s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0%, 100% {
+      background-position: 0% center;
+    }
+    50% {
+      background-position: 100% center;
+    }
+  }
+  
+  /* Apple Liquid Glass - Core */
+  .glass {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.08) 0%, 
+      rgba(255, 255, 255, 0.04) 100%);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      0 4px 30px rgba(0, 0, 0, 0.1),
+      inset 0 0 20px rgba(255, 255, 255, 0.08),
+      inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  }
+
+  html.light .glass {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.7) 0%, 
+      rgba(255, 255, 255, 0.5) 100%);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 
+      0 4px 30px rgba(0, 0, 0, 0.05),
+      inset 0 0 20px rgba(255, 255, 255, 0.4),
+      inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  }
+  
+  /* Apple Liquid Glass - Strong Variant */
+  .glass-strong {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.12) 0%, 
+      rgba(255, 255, 255, 0.06) 100%);
+    backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
+    -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 
+      0 8px 40px rgba(0, 0, 0, 0.15),
+      inset 0 0 30px rgba(255, 255, 255, 0.1),
+      inset 0 2px 4px rgba(255, 255, 255, 0.15);
+  }
+
+  html.light .glass-strong {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.8) 0%, 
+      rgba(255, 255, 255, 0.6) 100%);
+    backdrop-filter: blur(40px) saturate(200%) brightness(1.02);
+    -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.02);
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 
+      0 8px 40px rgba(0, 0, 0, 0.08),
+      inset 0 0 30px rgba(255, 255, 255, 0.5),
+      inset 0 3px 6px rgba(255, 255, 255, 0.9);
+  }
+
+  /* Apple Liquid Glass - Subtle Variant */
+  .glass-subtle {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.1) 0%, 
+      rgba(255, 255, 255, 0.05) 100%);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+      0 2px 20px rgba(0, 0, 0, 0.08),
+      inset 0 0 15px rgba(255, 255, 255, 0.15);
+  }
+
+  html.light .glass-subtle {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.6) 0%, 
+      rgba(255, 255, 255, 0.4) 100%);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 
+      0 2px 20px rgba(0, 0, 0, 0.04),
+      inset 0 0 15px rgba(255, 255, 255, 0.3),
+      inset 0 1px 3px rgba(255, 255, 255, 0.7);
+  }
+  
+  .glow-green {
+    box-shadow: 0 0 40px color-mix(in srgb, var(--accent-color) 30%, transparent), 
+                0 0 80px color-mix(in srgb, var(--accent-color) 15%, transparent);
+  }
+  
+  .glow-green-strong {
+    box-shadow: 0 0 60px color-mix(in srgb, var(--accent-color) 50%, transparent), 
+                0 0 120px color-mix(in srgb, var(--accent-color) 25%, transparent);
+  }
+  
+  .transition-smooth {
+    transition: all 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  
+  .transition-slow {
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  /* Apple Spring Animation */
+  .transition-spring {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Apple Depth Layers */
+  .depth-1 {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .depth-2 {
+    box-shadow: var(--shadow-md);
+  }
+
+  .depth-3 {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .depth-4 {
+    box-shadow: var(--shadow-xl);
+  }
+
+  /* Apple Vignette Effect */
+  .vignette {
+    position: relative;
+  }
+
+  .vignette::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.15) 100%);
+    border-radius: inherit;
+  }
+
+  html.light .vignette::after {
+    background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.05) 100%);
+  }
+
+  /* Apple Top Glossy Reflection */
+  .glass-reflection::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, transparent 100%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  html.light .glass-reflection::before {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, transparent 100%);
+  }
+
+  *:focus-visible {
+    outline: none;
+    ring: 2px solid var(--accent-color);
+    ring-offset: 2px;
+    ring-offset-color: #000000;
+  }
+
+  html.light *:focus-visible {
+    ring-offset-color: #ffffff;
+  }
+
+  a, button {
+    @apply transition-all duration-300;
+  }
+
+  * {
+    -webkit-tap-highlight-color: color-mix(in srgb, var(--accent-color) 10%, transparent);
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  * {
+    scrollbar-width: none;
+  }
+
+  * {
+    -ms-overflow-style: none;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--accent-color) 30%, transparent);
+    color: #f5f5f7;
+  }
+
+  html.light ::selection {
+    background-color: color-mix(in srgb, var(--accent-color) 30%, transparent);
+    color: #1a1a1a;
+  }
+
+  ::-moz-selection {
+    background-color: color-mix(in srgb, var(--accent-color) 30%, transparent);
+    color: #f5f5f7;
+  }
+
+  html.light ::-moz-selection {
+    background-color: color-mix(in srgb, var(--accent-color) 30%, transparent);
+    color: #1a1a1a;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .glass, .glass-strong {
+      backdrop-filter: blur(30px) saturate(150%) brightness(1.05);
+      -webkit-backdrop-filter: blur(30px) saturate(150%) brightness(1.05);
+    }
+  }
+}
