@@ -1,4 +1,6 @@
-const CACHE_NAME = 'xenos-v1'
+// Update this version number whenever you deploy new changes
+const CACHE_VERSION = '2.1.0-winter'
+const CACHE_NAME = `xenos-v${CACHE_VERSION}`
 const urlsToCache = [
   '/',
   '/assets/covers/unlock-cover.png',
@@ -13,6 +15,9 @@ const urlsToCache = [
 
 // Install event - cache resources
 self.addEventListener('install', (event) => {
+  // Force the waiting service worker to become the active service worker
+  self.skipWaiting()
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -59,15 +64,22 @@ self.addEventListener('fetch', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
+  // Take control of all pages immediately
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName)
-          }
-        })
-      )
-    })
+    Promise.all([
+      // Delete all old caches
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('Deleting old cache:', cacheName)
+              return caches.delete(cacheName)
+            }
+          })
+        )
+      }),
+      // Take control immediately
+      self.clients.claim()
+    ])
   )
 })
