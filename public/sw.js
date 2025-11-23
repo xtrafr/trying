@@ -72,6 +72,11 @@ self.addEventListener('fetch', (event) => {
 
   // For JS/CSS: Always fetch from network, update cache in background
   if (event.request.url.match(/\.(js|css)$/)) {
+    // Skip chrome extensions and other non-http(s) schemes
+    if (!event.request.url.startsWith('http')) {
+      return
+    }
+
     event.respondWith(
       fetch(event.request)
         .then(response => {
