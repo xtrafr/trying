@@ -65,13 +65,13 @@ const PaymentCheckout = ({ product, selectedTier, onClose }) => {
       
       if (!apiKey || apiKey === 'your_sellauth_api_key_here') {
         // Fallback: redirect to product page if no API key configured
-        console.warn('Sellauth API key not configured, redirecting to product page')
+        console.warn('Sellhub API key not configured, redirecting to product page')
         window.location.href = sellauthUrl
         return
       }
 
-      // Create invoice via Sellauth API
-      const response = await fetch('https://dev.sellauth.com/api/invoices', {
+      // Create invoice via Sellhub API
+      const response = await fetch('https://dev.sellhub.cx/api/invoices', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
@@ -449,7 +449,7 @@ const PaymentCheckout = ({ product, selectedTier, onClose }) => {
             gap: '6px'
           }}>
             <span style={{ fontSize: '16px' }}>🔒</span>
-            <span>Secure payment processed by <strong style={{ color: '#06b6d4' }}>Sellauth</strong></span>
+            <span>Secure payment processed by <strong style={{ color: '#06b6d4' }}>Sellhub</strong></span>
           </p>
         </div>
         </div>
