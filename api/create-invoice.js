@@ -34,14 +34,18 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'API key not configured. Please contact support.' })
     }
 
+    console.log('API Key present:', !!apiKey, 'Length:', apiKey?.length)
     console.log('Creating invoice for product:', product_id, 'gateway:', gateway)
+    console.log('Customer email:', customer_email)
+    console.log('Request body:', JSON.stringify({ product_id, customer_email, gateway, return_url, webhook_url, custom_fields }, null, 2))
 
     // Make request to Sellhub API
     const response = await fetch('https://dev.sellhub.cx/api/invoices', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify({
         product_id,
@@ -53,7 +57,26 @@ export default async function handler(req, res) {
       })
     })
 
-    const data = await response.json()
+    // Log response details
+    console.log('Sellhub response status:', response.status)
+    console.log('Sellhub response headers:', Object.fromEntries(response.headers.entries()))
+
+    // Get response text first to handle both JSON and HTML responses
+    const responseText = await response.text()
+    console.log('Sellhub response body:', responseText.substring(0, 500))
+
+    let data
+    try {
+      data = JSON.parse(responseText)
+    } catch (parseError) {
+      console.error('Failed to parse response as JSON:', parseError.message)
+      console.error('Response was:', responseText.substring(0, 200))
+      return res.status(500).json({
+        error: 'Invalid response from payment provider',
+        message: 'The payment provider returned an invalid response. Please check your API key and product ID.',
+        details: responseText.substring(0, 200)
+      })
+    }
 
     if (!response.ok) {
       console.error('Sellhub API error:', response.status, data)
