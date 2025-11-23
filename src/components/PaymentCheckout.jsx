@@ -57,16 +57,12 @@ const PaymentCheckout = ({ product, selectedTier, onClose }) => {
         throw new Error('Product URL not available')
       }
 
-      // Add email and gateway as query parameters
-      const url = new URL(sellauthUrl)
-      url.searchParams.set('email', email)
-      url.searchParams.set('gateway', selectedPayment.toLowerCase())
-      
       setSuccess(true)
       
       // Redirect directly to Sellhub product page
+      // Note: The product must exist in Sellhub dashboard with this ID
       setTimeout(() => {
-        window.location.href = url.toString()
+        window.location.href = sellauthUrl
       }, 1000)
       
     } catch (err) {
