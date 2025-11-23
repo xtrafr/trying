@@ -51,25 +51,66 @@ const PaymentCheckout = ({ product, selectedTier, onClose }) => {
     setError('')
 
     try {
-      // Get the SellAuth URL directly from product data
+      // Get the Sellauth product ID from the URL
       const sellauthUrl = product.sellauthUrls?.[selectedTier.value]
-      
       if (!sellauthUrl) {
-        setError('Product URL not available')
+        throw new Error('Product URL not available')
+      }
+
+      // Extract product ID from URL
+      const productId = sellauthUrl.split('/').pop()
+      
+      // API Key from environment variable
+      const apiKey = import.meta.env.VITE_SELLAUTH_API_KEY
+      
+      if (!apiKey || apiKey === 'your_sellauth_api_key_here') {
+        // Fallback: redirect to product page if no API key configured
+        console.warn('Sellauth API key not configured, redirecting to product page')
+        window.location.href = sellauthUrl
         return
       }
 
+      // Create invoice via Sellauth API
+      const response = await fetch('https://dev.sellauth.com/api/invoices', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          product_id: productId,
+          customer_email: email,
+          gateway: selectedPayment,
+          return_url: `${window.location.origin}/?payment=success`,
+          webhook_url: `${window.location.origin}/api/webhook`,
+          custom_fields: {
+            product_name: product.name,
+            tier: selectedTier.label
+          }
+        })
+      })
+
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.message || data.error || 'Failed to create invoice')
+      }
+      
       setSuccess(true)
       
-      // Redirect to SellAuth product page
+      // Redirect to invoice URL
       setTimeout(() => {
-        window.location.href = sellauthUrl
-      }, 1500)
+        if (data.invoice_url || data.url) {
+          window.location.href = data.invoice_url || data.url
+        } else {
+          // Fallback to product page
+          window.location.href = sellauthUrl
+        }
+      }, 1000)
       
     } catch (err) {
       console.error('Payment error:', err)
-      setError('An error occurred. Please try again.')
-    } finally {
+      setError(err.message || 'Failed to create invoice. Please try again.')
       setLoading(false)
     }
   }

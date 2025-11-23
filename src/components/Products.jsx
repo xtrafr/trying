@@ -68,10 +68,8 @@ const Products = () => {
   const handlePurchase = () => {
     if (!selectedProduct || !selectedTier) return
     
-    const url = selectedProduct.sellauthUrls?.[selectedTier.value]
-    if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer')
-    }
+    // Open the payment checkout modal
+    setShowPaymentCheckout(true)
   }
 
   const openLightbox = (images, index) => {
@@ -720,15 +718,13 @@ const Products = () => {
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-dark-lighter to-transparent -z-10" aria-hidden="true" />
       
       {/* Payment Checkout Modal */}
-      {console.log('showPaymentCheckout:', showPaymentCheckout, 'selectedProduct:', !!selectedProduct)}
       {showPaymentCheckout && selectedProduct && (
         <PaymentCheckout
           product={selectedProduct}
           selectedTier={selectedTier}
           onClose={() => {
-            console.log('Payment modal closing')
             setShowPaymentCheckout(false)
-            closeModal() // Also close the product modal
+            closeModal()
           }}
         />
       )}
