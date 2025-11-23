@@ -359,12 +359,19 @@ const PaymentCheckout = ({ product, selectedTier, onClose }) => {
         {/* Success Message */}
         {success && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded-lg flex items-center gap-3"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-6 p-5 bg-gradient-to-r from-green-500/15 to-green-600/10 border-2 border-green-500/40 rounded-xl flex items-center gap-4 shadow-lg"
           >
-            <CheckCircle className="text-green-500" size={20} />
-            <p className="text-green-400 text-sm">Redirecting to payment page...</p>
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center animate-pulse">
+                <CheckCircle className="text-white" size={24} />
+              </div>
+            </div>
+            <div className="flex-1">
+              <p className="text-green-400 font-bold text-base mb-1">Invoice Created Successfully!</p>
+              <p className="text-green-300/80 text-sm">Taking you to the secure payment page...</p>
+            </div>
           </motion.div>
         )}
 
@@ -379,7 +386,7 @@ const PaymentCheckout = ({ product, selectedTier, onClose }) => {
               ? '#334155' 
               : 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
             color: 'white',
-            fontWeight: '600',
+            fontWeight: '700',
             fontSize: '16px',
             borderRadius: '12px',
             border: 'none',
@@ -390,7 +397,9 @@ const PaymentCheckout = ({ product, selectedTier, onClose }) => {
             justifyContent: 'center',
             gap: '8px',
             opacity: loading || success ? 0.6 : 1,
-            boxShadow: loading || success ? 'none' : '0 4px 12px rgba(6, 182, 212, 0.3)'
+            boxShadow: loading || success ? 'none' : '0 4px 12px rgba(6, 182, 212, 0.3)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           }}
           onMouseEnter={(e) => {
             if (!loading && !success) {
@@ -406,31 +415,43 @@ const PaymentCheckout = ({ product, selectedTier, onClose }) => {
           {loading ? (
             <>
               <Loader2 className="animate-spin" size={20} />
-              Creating Invoice...
+              <span>Creating Invoice...</span>
             </>
           ) : success ? (
             <>
               <CheckCircle size={20} />
-              Redirecting...
+              <span>Redirecting...</span>
             </>
           ) : (
             <>
               <CreditCard size={20} />
-              Complete Purchase
+              <span>Create Invoice & Pay</span>
             </>
           )}
         </button>
 
         {/* Footer Note */}
-        <p style={{ 
-          fontSize: '12px', 
-          color: '#64748b', 
-          textAlign: 'center', 
+        <div style={{
           marginTop: '20px',
-          marginBottom: 0
+          padding: '16px',
+          background: 'rgba(6, 182, 212, 0.05)',
+          borderRadius: '12px',
+          border: '1px solid rgba(6, 182, 212, 0.15)'
         }}>
-          🔒 You will be redirected to a secure Sellauth payment page
-        </p>
+          <p style={{ 
+            fontSize: '13px', 
+            color: '#64748b', 
+            textAlign: 'center',
+            margin: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px'
+          }}>
+            <span style={{ fontSize: '16px' }}>🔒</span>
+            <span>Secure payment processed by <strong style={{ color: '#06b6d4' }}>Sellauth</strong></span>
+          </p>
+        </div>
         </div>
       </div>
     </div>
