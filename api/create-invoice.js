@@ -26,30 +26,66 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required fields: product_id, customer_email, gateway' })
     }
 
-    // Get API key from environment variable
-    const apiKey = process.env.VITE_SELLHUB_API_KEY
-
-    if (!apiKey) {
-      console.error('Sellhub API key not configured in environment variables')
-      return res.status(500).json({ error: 'API key not configured. Please contact support.' })
-    }
-
-    console.log('API Key present:', !!apiKey, 'Length:', apiKey?.length)
-    console.log('Creating invoice for product:', product_id, 'gateway:', gateway)
+    console.log('Creating checkout session for product:', product_id, 'gateway:', gateway)
     console.log('Customer email:', customer_email)
 
-    // Sellhub uses product-specific checkout URLs, not a general invoice creation endpoint
-    // Construct the checkout URL with the product ID and return the prefilled URL
-    const checkoutUrl = `https://xenosud.sellhub.cx/product/${product_id}?email=${encodeURIComponent(customer_email)}&gateway=${gateway}`
+    // Create checkout session via Sellhub API
+    // Docs: https://docs.sellhub.cx/api/checkout/create-checkout
+    const response = await fetch('https://xenosud.sellhub.cx/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: customer_email,
+        currency: 'usd',
+        returnUrl: return_url || 'https://www.xenos.lol/?payment=success',
+        methodName: gateway,
+        cartBundles: [],
+        bundleIds: [],
+        customFieldValues: [],
+        cart: {
+          items: [
+            {
+              id: product_id,
+              coupon: '',
+              name: custom_fields?.product_name || '',
+              variant: {
+                id: product_id,
+                name: custom_fields?.tier || '',
+                price: '0.00'
+              },
+              quantity: 1,
+              addons: []
+            }
+          ],
+          bundles: []
+        }
+      })
+    })
+
+    console.log('Sellhub checkout response status:', response.status)
+
+    const data = await response.json()
+    console.log('Sellhub checkout response:', JSON.stringify(data, null, 2))
+
+    if (!response.ok || data.status !== 'success') {
+      console.error('Sellhub checkout error:', data)
+      return res.status(response.status || 500).json({
+        error: data.message || 'Failed to create checkout session',
+        details: data
+      })
+    }
+
+    // Return the checkout session - redirect to process checkout
+    const checkoutUrl = `https://xenosud.sellhub.cx/checkout/${data.session.id}`
     
-    console.log('Redirecting to checkout URL:', checkoutUrl)
-    
-    // Return the checkout URL for the frontend to redirect to
     return res.status(200).json({
       success: true,
       invoice_url: checkoutUrl,
       url: checkoutUrl,
-      message: 'Redirecting to Sellhub checkout'
+      session_id: data.session.id,
+      message: 'Checkout session created successfully'
     })
 
   } catch (error) {
