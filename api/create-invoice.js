@@ -40,22 +40,57 @@ export default async function handler(req, res) {
     console.log('Request body:', JSON.stringify({ product_id, customer_email, gateway, return_url, webhook_url, custom_fields }, null, 2))
 
     // Make request to Sellhub API
-    const response = await fetch('https://dev.sellhub.cx/api/invoices', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        product_id,
-        customer_email,
-        gateway,
-        return_url,
-        webhook_url,
-        custom_fields
+    // Try multiple possible endpoints
+    const possibleEndpoints = [
+      'https://dev.sellhub.cx/api/v1/invoices',
+      'https://api.sellhub.cx/v1/invoices',
+      'https://sellhub.cx/api/v1/invoices'
+    ]
+
+    let response
+    let lastError
+    
+    for (const endpoint of possibleEndpoints) {
+      console.log('Trying endpoint:', endpoint)
+      
+      try {
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            product_id,
+            customer_email,
+            gateway,
+            return_url,
+            webhook_url,
+            custom_fields
+          })
+        })
+
+        console.log('Endpoint', endpoint, 'returned status:', response.status)
+        
+        // If not 404, we found the right endpoint
+        if (response.status !== 404) {
+          console.log('Using endpoint:', endpoint)
+          break
+        }
+      } catch (err) {
+        console.log('Error with endpoint', endpoint, ':', err.message)
+        lastError = err
+        continue
+      }
+    }
+
+    if (!response || response.status === 404) {
+      return res.status(500).json({
+        error: 'Could not find valid Sellhub API endpoint',
+        message: 'Please verify the correct API endpoint URL in Sellhub documentation'
       })
-    })
+    }
 
     // Log response details
     console.log('Sellhub response status:', response.status)
