@@ -37,95 +37,20 @@ export default async function handler(req, res) {
     console.log('API Key present:', !!apiKey, 'Length:', apiKey?.length)
     console.log('Creating invoice for product:', product_id, 'gateway:', gateway)
     console.log('Customer email:', customer_email)
-    console.log('Request body:', JSON.stringify({ product_id, customer_email, gateway, return_url, webhook_url, custom_fields }, null, 2))
 
-    // Make request to Sellhub API
-    // Based on Sellhub API docs: https://docs.sellhub.cx/api
-    const possibleEndpoints = [
-      'https://dash.sellhub.cx/api/sellhub/invoices',
-      'https://dash.sellhub.cx/api/v1/invoices',
-      'https://api.sellhub.cx/invoices',
-      'https://dev.sellhub.cx/api/v1/invoices'
-    ]
-
-    let response
-    let lastError
+    // Sellhub uses product-specific checkout URLs, not a general invoice creation endpoint
+    // Construct the checkout URL with the product ID and return the prefilled URL
+    const checkoutUrl = `https://xenosud.sellhub.cx/product/${product_id}?email=${encodeURIComponent(customer_email)}&gateway=${gateway}`
     
-    for (const endpoint of possibleEndpoints) {
-      console.log('Trying endpoint:', endpoint)
-      
-      try {
-        response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            product_id,
-            customer_email,
-            gateway,
-            return_url,
-            webhook_url,
-            custom_fields
-          })
-        })
-
-        console.log('Endpoint', endpoint, 'returned status:', response.status)
-        
-        // If not 404, we found the right endpoint
-        if (response.status !== 404) {
-          console.log('Using endpoint:', endpoint)
-          break
-        }
-      } catch (err) {
-        console.log('Error with endpoint', endpoint, ':', err.message)
-        lastError = err
-        continue
-      }
-    }
-
-    if (!response || response.status === 404) {
-      return res.status(500).json({
-        error: 'Could not find valid Sellhub API endpoint',
-        message: 'Please verify the correct API endpoint URL in Sellhub documentation'
-      })
-    }
-
-    // Log response details
-    console.log('Sellhub response status:', response.status)
-    console.log('Sellhub response headers:', Object.fromEntries(response.headers.entries()))
-
-    // Get response text first to handle both JSON and HTML responses
-    const responseText = await response.text()
-    console.log('Sellhub response body:', responseText.substring(0, 500))
-
-    let data
-    try {
-      data = JSON.parse(responseText)
-    } catch (parseError) {
-      console.error('Failed to parse response as JSON:', parseError.message)
-      console.error('Response was:', responseText.substring(0, 200))
-      return res.status(500).json({
-        error: 'Invalid response from payment provider',
-        message: 'The payment provider returned an invalid response. Please check your API key and product ID.',
-        details: responseText.substring(0, 200)
-      })
-    }
-
-    if (!response.ok) {
-      console.error('Sellhub API error:', response.status, data)
-      return res.status(response.status).json({
-        error: data.message || data.error || 'Failed to create invoice',
-        details: data
-      })
-    }
-
-    console.log('Invoice created successfully:', data)
-
-    // Return the invoice data
-    return res.status(200).json(data)
+    console.log('Redirecting to checkout URL:', checkoutUrl)
+    
+    // Return the checkout URL for the frontend to redirect to
+    return res.status(200).json({
+      success: true,
+      invoice_url: checkoutUrl,
+      url: checkoutUrl,
+      message: 'Redirecting to Sellhub checkout'
+    })
 
   } catch (error) {
     console.error('Error creating invoice:', error)
