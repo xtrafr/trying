@@ -61,7 +61,7 @@ const PaymentCheckout = ({ product, selectedTier, onClose }) => {
       const productId = sellauthUrl.split('/').pop()
       
       // API Key from environment variable
-      const apiKey = import.meta.env.VITE_SELLAUTH_API_KEY
+      const apiKey = import.meta.env.VITE_SELLHUB_API_KEY
       
       if (!apiKey || apiKey === 'your_sellauth_api_key_here') {
         // Fallback: redirect to product page if no API key configured
