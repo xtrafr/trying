@@ -33,12 +33,17 @@ export default async function handler(req, res) {
     // Sellhub product page with prefilled email and gateway
     // The product page will handle the checkout properly
     const params = new URLSearchParams()
-    params.append('email', customer_email)
+    if (customer_email) {
+      params.append('email', customer_email)
+    }
     if (gateway) {
       params.append('gateway', gateway.toLowerCase())
     }
     
-    const checkoutUrl = `https://xenosud.sellhub.cx/product/${product_id}?${params.toString()}`
+    const queryString = params.toString()
+    const checkoutUrl = queryString 
+      ? `https://xenosud.sellhub.cx/product/${product_id}?${queryString}`
+      : `https://xenosud.sellhub.cx/product/${product_id}`
     
     console.log('Checkout URL:', checkoutUrl)
     

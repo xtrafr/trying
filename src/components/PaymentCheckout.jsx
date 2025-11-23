@@ -51,55 +51,27 @@ const PaymentCheckout = ({ product, selectedTier, onClose }) => {
     setError('')
 
     try {
-      // Get the Sellauth product ID from the URL
+      // Get the Sellauth product URL
       const sellauthUrl = product.sellauthUrls?.[selectedTier.value]
       if (!sellauthUrl) {
         throw new Error('Product URL not available')
       }
 
-      // Extract product ID from URL
-      const productId = sellauthUrl.split('/').pop()
-
-      // Create invoice via our proxy API (bypasses CORS)
-      const response = await fetch('/api/create-invoice', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          product_id: productId,
-          customer_email: email,
-          gateway: selectedPayment,
-          return_url: `${window.location.origin}/?payment=success`,
-          webhook_url: `${window.location.origin}/api/webhook`,
-          custom_fields: {
-            product_name: product.name,
-            tier: selectedTier.label
-          }
-        })
-      })
-
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || data.error || 'Failed to create invoice')
-      }
+      // Add email and gateway as query parameters
+      const url = new URL(sellauthUrl)
+      url.searchParams.set('email', email)
+      url.searchParams.set('gateway', selectedPayment.toLowerCase())
       
       setSuccess(true)
       
-      // Redirect to invoice URL
+      // Redirect directly to Sellhub product page
       setTimeout(() => {
-        if (data.invoice_url || data.url) {
-          window.location.href = data.invoice_url || data.url
-        } else {
-          // Fallback to product page
-          window.location.href = sellauthUrl
-        }
+        window.location.href = url.toString()
       }, 1000)
       
     } catch (err) {
       console.error('Payment error:', err)
-      setError(err.message || 'Failed to create invoice. Please try again.')
+      setError(err.message || 'Failed to redirect to payment. Please try again.')
       setLoading(false)
     }
   }
