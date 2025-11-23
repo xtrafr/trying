@@ -40,11 +40,12 @@ export default async function handler(req, res) {
     console.log('Request body:', JSON.stringify({ product_id, customer_email, gateway, return_url, webhook_url, custom_fields }, null, 2))
 
     // Make request to Sellhub API
-    // Try multiple possible endpoints
+    // Based on Sellhub API docs: https://docs.sellhub.cx/api
     const possibleEndpoints = [
-      'https://dev.sellhub.cx/api/v1/invoices',
-      'https://api.sellhub.cx/v1/invoices',
-      'https://sellhub.cx/api/v1/invoices'
+      'https://dash.sellhub.cx/api/sellhub/invoices',
+      'https://dash.sellhub.cx/api/v1/invoices',
+      'https://api.sellhub.cx/invoices',
+      'https://dev.sellhub.cx/api/v1/invoices'
     ]
 
     let response
