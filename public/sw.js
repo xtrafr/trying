@@ -1,5 +1,5 @@
 // Update this version number whenever you deploy new changes
-const CACHE_VERSION = '2.1.0-winter'
+const CACHE_VERSION = '2.2.0-sellhub'
 const CACHE_NAME = `xenos-v${CACHE_VERSION}`
 const urlsToCache = [
   '/',
@@ -26,40 +26,65 @@ self.addEventListener('install', (event) => {
   )
 })
 
-// Fetch event - serve from cache when offline
+// Fetch event - Network first, fallback to cache for assets only
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Cache hit - return response
-        if (response) {
-          return response
-        }
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') {
+    return
+  }
 
-        // Clone the request
-        const fetchRequest = event.request.clone()
+  // Network-first strategy for HTML
+  if (event.request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => response)
+        .catch(() => caches.match(event.request))
+    )
+    return
+  }
 
-        return fetch(fetchRequest).then((response) => {
-          // Check if valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
+  // Cache-first only for static assets (images, fonts)
+  if (event.request.url.match(/\.(png|jpg|jpeg|gif|svg|webp|avif|ico|woff2?|ttf|eot)$/)) {
+    event.respondWith(
+      caches.match(event.request)
+        .then((response) => {
+          if (response) {
             return response
           }
-
-          // Clone the response
-          const responseToCache = response.clone()
-
-          // Cache images and assets
-          if (event.request.url.match(/\.(png|jpg|jpeg|gif|svg|webp|avif|ico|woff2?|ttf|eot)$/)) {
-            caches.open(CACHE_NAME)
-              .then((cache) => {
+          return fetch(event.request).then((response) => {
+            if (response && response.status === 200) {
+              const responseToCache = response.clone()
+              caches.open(CACHE_NAME).then((cache) => {
                 cache.put(event.request, responseToCache)
               })
-          }
+            }
+            return response
+          })
+        })
+    )
+    return
+  }
 
+  // For JS/CSS: Always fetch from network, update cache in background
+  if (event.request.url.match(/\.(js|css)$/)) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response && response.status === 200) {
+            const responseToCache = response.clone()
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache)
+            })
+          }
           return response
         })
-      })
-  )
+        .catch(() => caches.match(event.request))
+    )
+    return
+  }
+
+  // Default: network only
+  event.respondWith(fetch(event.request))
 })
 
 // Activate event - clean up old caches
