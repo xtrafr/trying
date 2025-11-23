@@ -66,15 +66,12 @@ const Products = () => {
   }, [])
 
   const handlePurchase = () => {
-    console.log('handlePurchase called', { selectedProduct, selectedTier })
-    if (!selectedProduct || !selectedTier) {
-      console.log('Missing product or tier')
-      return
-    }
+    if (!selectedProduct || !selectedTier) return
     
-    console.log('Setting showPaymentCheckout to true')
-    // Open the payment checkout (keep modal open temporarily)
-    setShowPaymentCheckout(true)
+    const url = selectedProduct.sellauthUrls?.[selectedTier.value]
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer')
+    }
   }
 
   const openLightbox = (images, index) => {
@@ -152,7 +149,7 @@ const Products = () => {
               onClick={() => openModal(product)}
             >
               {/* Product Image */}
-              <div className="relative w-full h-40 sm:h-48 bg-dark-lighter overflow-hidden">
+              <div className="relative w-full h-48 sm:h-56 bg-gradient-to-br from-dark-lighter to-dark overflow-hidden">
                 <ProductImage 
                   product={product}
                   lazy={index > 0}
@@ -160,60 +157,56 @@ const Products = () => {
                   fetchpriority={index === 0 ? 'high' : 'low'}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-60" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 ease-out bg-dark/50 backdrop-blur-sm">
-                  <div className="text-center">
-                    <Eye className="mx-auto mb-2 text-primary" size={24} />
-                    <span className="text-white font-semibold text-xs sm:text-sm">View Details</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-dark-card via-transparent to-transparent" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out bg-black/60 backdrop-blur-md">
+                  <div className="text-center transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                    <Eye className="mx-auto mb-2 text-primary drop-shadow-lg" size={32} />
+                    <span className="text-white font-bold text-sm tracking-wide">View Details</span>
                   </div>
                 </div>
                 {product.inStock ? (
-                  <span className="absolute top-2 right-2 px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
-                    In Stock
+                  <span className="absolute top-3 right-3 px-3 py-1.5 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-bold rounded-full shadow-lg">
+                    ● In Stock
                   </span>
                 ) : (
-                  <span className="absolute top-2 right-2 px-2 py-1 bg-red-500 text-white text-xs font-semibold rounded-full">
-                    Out of Stock
+                  <span className="absolute top-3 right-3 px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full shadow-lg">
+                    ● Out of Stock
                   </span>
                 )}
               </div>
 
               {/* Product Content */}
-              <div className="p-5 sm:p-6 flex flex-col h-full">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-white mb-1">{product.name}</h3>
-                    <p className="text-xs sm:text-sm text-primary">{product.category}</p>
+              <div className="p-6 flex flex-col h-full bg-gradient-to-b from-dark-card to-dark-lighter">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl sm:text-2xl font-black text-white mb-1.5 tracking-tight">{product.name}</h3>
+                    {product.category && <p className="text-xs sm:text-sm text-primary font-semibold">{product.category}</p>}
                   </div>
                 </div>
 
-                <p className="text-gray-400 text-xs sm:text-sm mb-4 line-clamp-2">{product.description}</p>
+                <p className="text-gray-300 text-sm mb-5 line-clamp-3 leading-relaxed">{product.description}</p>
 
-                <div className="mb-4 inline-flex items-baseline gap-2">
-                  {product.price.includes('-') ? (
-                    <>
-                      <span className="text-xs text-gray-500 font-medium">from</span>
-                      <span className="text-xl font-semibold text-primary">{product.price.split(' - ')[0]}</span>
-                    </>
-                  ) : (
-                    <span className="text-xl font-semibold text-primary">{product.price}</span>
-                  )}
+                <div className="mb-5 flex items-center gap-2">
+                  <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Starting at</span>
+                  <span className="text-2xl font-black text-primary">
+                    {product.price.includes('-') ? product.price.split(' - ')[0] : product.price}
+                  </span>
                 </div>
 
                 {/* Features Preview */}
-                <div className="mb-4 flex-grow">
-                  <h4 className="text-sm font-semibold text-gray-300 mb-2">Key Features:</h4>
+                <div className="flex-grow">
+                  <h4 className="text-xs font-black text-gray-400 mb-3 uppercase tracking-wider">Top Features</h4>
                   <div className="flex flex-wrap gap-2">
                     {product.features.slice(0, 3).map((feature, idx) => (
                       <span
                         key={idx}
-                        className="px-2.5 py-1.5 bg-primary/10 text-primary text-xs rounded-md border border-primary/30"
+                        className="px-3 py-1.5 bg-gradient-to-r from-primary/15 to-primary/10 text-primary text-xs font-semibold rounded-lg border border-primary/30 hover:border-primary/50 transition-all duration-200"
                       >
                         {feature}
                       </span>
                     ))}
                     {product.features.length > 3 && (
-                      <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-md border border-primary/30">
+                      <span className="px-3 py-1.5 bg-gradient-to-r from-primary/15 to-primary/10 text-primary text-xs font-bold rounded-lg border border-primary/30">
                         +{product.features.length - 3} more
                       </span>
                     )}
@@ -619,72 +612,25 @@ const Products = () => {
                   </div>
                 )}
 
-                {/* Action Buttons (stack on mobile) */}
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px',
-                  marginTop: '20px',
-                  paddingTop: '16px',
-                  borderTop: '1px solid rgba(71, 85, 105, 0.3)'
-                }} className="sm:flex-row">
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-primary/20">
                   <button
                     onClick={closeModal}
-                    style={{
-                      flex: 1,
-                      padding: '12px 20px',
-                      background: '#1a1d24',
-                      color: '#e2e8f0',
-                      fontWeight: '600',
-                      borderRadius: '10px',
-                      border: '1px solid #334155',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      fontSize: '14px'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.background = '#23262e'
-                      e.target.style.borderColor = '#475569'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.background = '#1a1d24'
-                      e.target.style.borderColor = '#334155'
-                    }}
+                    className="flex-1 py-4 px-6 bg-dark-lighter hover:bg-dark text-white font-bold rounded-xl border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 text-sm uppercase tracking-wider shadow-lg"
                   >
                     Close
                   </button>
                   {selectedProduct.inStock && (
-                    <button
+                    <motion.button
                       onClick={handlePurchase}
-                      style={{
-                        flex: 1,
-                        padding: '12px 20px',
-                        background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
-                        color: 'white',
-                        fontWeight: '600',
-                        borderRadius: '10px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s',
-                        fontSize: '14px',
-                        boxShadow: '0 4px 12px rgba(6, 182, 212, 0.3)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.transform = 'translateY(-2px)'
-                        e.target.style.boxShadow = '0 6px 20px rgba(6, 182, 212, 0.4)'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.transform = 'translateY(0)'
-                        e.target.style.boxShadow = '0 4px 12px rgba(6, 182, 212, 0.3)'
-                      }}
+                      whileHover={{ scale: 1.02, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex-1 py-4 px-6 bg-gradient-to-r from-primary via-primary-dark to-primary hover:from-primary-dark hover:via-primary hover:to-primary-dark text-white font-black rounded-xl shadow-xl shadow-primary/50 hover:shadow-primary/70 transition-all duration-300 flex items-center justify-center gap-2.5 text-sm uppercase tracking-wider relative overflow-hidden group"
                     >
-                      <ExternalLink size={16} />
-                      Purchase Now
-                    </button>
+                      <span className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+                      <ExternalLink className="relative z-10 group-hover:rotate-12 transition-transform duration-300" size={18} />
+                      <span className="relative z-10">Purchase Now</span>
+                    </motion.button>
                   )}
                 </div>
               </div>

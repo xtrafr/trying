@@ -11,10 +11,10 @@ export const PRODUCTS_DATA = [
       {"label": "Lifetime", "price": "€45", "value": "lifetime"}
     ],
     "sellauthUrls": {
-      "3days": "https://xenosud.sellhub.cx/product/unlock/",
-      "1week": "https://xenosud.sellhub.cx/product/unlock/",
-      "1month": "https://xenosud.sellhub.cx/product/unlock/",
-      "lifetime": "https://xenosud.sellhub.cx/product/unlock/"
+      "3days": "https://xenosud.sellhub.cx/product/6787e68eaafb26bba5419e0e",
+      "1week": "https://xenosud.sellhub.cx/product/6787e68eaafb26bba5419e10",
+      "1month": "https://xenosud.sellhub.cx/product/6787e68eaafb26bba5419e12",
+      "lifetime": "https://xenosud.sellhub.cx/product/6787e68eaafb26bba5419e14"
     },
     "category": "",
     "compatibility": [
@@ -55,8 +55,8 @@ export const PRODUCTS_DATA = [
       {"label": "Lifetime", "price": "€45", "value": "lifetime"}
     ],
     "sellauthUrls": {
-      "1time": "https://xenosud.sellhub.cx/product/perm",
-      "lifetime": "https://xenosud.sellhub.cx/product/perm"
+      "1time": "https://xenosud.sellhub.cx/product/6787e7a3aafb26bba5419e16",
+      "lifetime": "https://xenosud.sellhub.cx/product/6787e7a3aafb26bba5419e18"
     },
     "category": "",
     "features": [
@@ -104,10 +104,10 @@ export const PRODUCTS_DATA = [
       {"label": "Lifetime", "price": "€30", "value": "lifetime"}
     ],
     "sellauthUrls": {
-      "1day": "https://xenosud.sellhub.cx/product/trigger",
-      "1week": "https://xenosud.sellhub.cx/product/trigger",
-      "1month": "https://xenosud.sellhub.cx/product/trigger",
-      "lifetime": "https://xenosud.sellhub.cx/product/trigger"
+      "1day": "https://xenosud.sellhub.cx/product/6787e809aafb26bba5419e1a",
+      "1week": "https://xenosud.sellhub.cx/product/6787e809aafb26bba5419e1c",
+      "1month": "https://xenosud.sellhub.cx/product/6787e809aafb26bba5419e1e",
+      "lifetime": "https://xenosud.sellhub.cx/product/6787e809aafb26bba5419e20"
     },
     "category": "",
     "features": [
@@ -163,10 +163,10 @@ export const PRODUCTS_DATA = [
       {"label": "Lifetime", "price": "€55", "value": "lifetime"}
     ],
     "sellauthUrls": {
-      "1day": "https://xenosud.sellhub.cx/product/private",
-      "1week": "https://xenosud.sellhub.cx/product/private",
-      "1month": "https://xenosud.sellhub.cx/product/private",
-      "lifetime": "https://xenosud.sellhub.cx/product/private"
+      "1day": "https://xenosud.sellhub.cx/product/6787e859aafb26bba5419e22",
+      "1week": "https://xenosud.sellhub.cx/product/6787e859aafb26bba5419e24",
+      "1month": "https://xenosud.sellhub.cx/product/6787e859aafb26bba5419e26",
+      "lifetime": "https://xenosud.sellhub.cx/product/6787e859aafb26bba5419e28"
     },
     "category": "",
     "compatibility": [
