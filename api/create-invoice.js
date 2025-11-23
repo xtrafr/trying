@@ -19,73 +19,34 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { product_id, customer_email, gateway, return_url, webhook_url, custom_fields } = req.body
+    const { product_id, customer_email, gateway, return_url } = req.body
 
     // Validate required fields
-    if (!product_id || !customer_email || !gateway) {
-      return res.status(400).json({ error: 'Missing required fields: product_id, customer_email, gateway' })
+    if (!product_id || !customer_email) {
+      return res.status(400).json({ error: 'Missing required fields: product_id, customer_email' })
     }
 
-    console.log('Creating checkout session for product:', product_id, 'gateway:', gateway)
+    console.log('Redirecting to product:', product_id)
     console.log('Customer email:', customer_email)
+    console.log('Payment gateway:', gateway)
 
-    // Create checkout session via Sellhub API
-    // Docs: https://docs.sellhub.cx/api/checkout/create-checkout
-    const response = await fetch('https://xenosud.sellhub.cx/api/checkout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: customer_email,
-        currency: 'usd',
-        returnUrl: return_url || 'https://www.xenos.lol/?payment=success',
-        methodName: gateway,
-        cartBundles: [],
-        bundleIds: [],
-        customFieldValues: [],
-        cart: {
-          items: [
-            {
-              id: product_id,
-              coupon: '',
-              name: custom_fields?.product_name || '',
-              variant: {
-                id: product_id,
-                name: custom_fields?.tier || '',
-                price: '0.00'
-              },
-              quantity: 1,
-              addons: []
-            }
-          ],
-          bundles: []
-        }
-      })
-    })
-
-    console.log('Sellhub checkout response status:', response.status)
-
-    const data = await response.json()
-    console.log('Sellhub checkout response:', JSON.stringify(data, null, 2))
-
-    if (!response.ok || data.status !== 'success') {
-      console.error('Sellhub checkout error:', data)
-      return res.status(response.status || 500).json({
-        error: data.message || 'Failed to create checkout session',
-        details: data
-      })
+    // Sellhub product page with prefilled email and gateway
+    // The product page will handle the checkout properly
+    const params = new URLSearchParams()
+    params.append('email', customer_email)
+    if (gateway) {
+      params.append('gateway', gateway.toLowerCase())
     }
-
-    // Return the checkout session - redirect to process checkout
-    const checkoutUrl = `https://xenosud.sellhub.cx/checkout/${data.session.id}`
+    
+    const checkoutUrl = `https://xenosud.sellhub.cx/product/${product_id}?${params.toString()}`
+    
+    console.log('Checkout URL:', checkoutUrl)
     
     return res.status(200).json({
       success: true,
       invoice_url: checkoutUrl,
       url: checkoutUrl,
-      session_id: data.session.id,
-      message: 'Checkout session created successfully'
+      message: 'Redirecting to Sellhub checkout'
     })
 
   } catch (error) {
