@@ -45,6 +45,11 @@ self.addEventListener('fetch', (event) => {
 
   // Cache-first only for static assets (images, fonts)
   if (event.request.url.match(/\.(png|jpg|jpeg|gif|svg|webp|avif|ico|woff2?|ttf|eot)$/)) {
+    // Skip chrome extensions and other non-http(s) schemes
+    if (!event.request.url.startsWith('http')) {
+      return
+    }
+
     event.respondWith(
       caches.match(event.request)
         .then((response) => {
