@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en" translate="no" class="notranslate">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <title>xenos.lol</title>
+        <meta name="google" content="notranslate" />
+        <meta name="theme-color" content="#06b6d4" />
+        <meta name="description" content="Premium digital solutions for gaming, streaming, and security. Trusted by thousands of customers worldwide." />
+        
+        <!-- Performance optimization -->
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        
+        <!-- Critical resources preloading -->
+        <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" as="style" />
+        <link rel="preload" href="/assets/icons/favicon-32x32.png" as="image" />
+        <link rel="preload" href="/assets/covers/unlock-cover.png" as="image" />
+        
+        <!-- Font loading -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+        
+        <!-- Icons and manifest -->
+        <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png" />
+        <link rel="icon" href="/assets/icons/favicon.ico" />
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://xenos.lol/" />
+        <meta property="og:title" content="Xenos Services - Premium Digital Solutions" />
+        <meta property="og:description" content="Experience undetectable gaming cheats, advanced spoofers, and premium digital solutions. Join 1000+ satisfied customers with 24/7 support." />
+        <meta property="og:image" content="https://xenos.lol/assets/covers/private-cover.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="Xenos Services" />
+        <meta property="og:locale" content="en_US" />
+        
+        <!-- Scroll to top on page load -->
+        <script>
+            // Immediately scroll to top and prevent scroll restoration
+            try {
+                if (history.scrollRestoration) {
+                    history.scrollRestoration = 'manual';
+                }
+                window.scrollTo(0, 0);
+                if (document.documentElement) document.documentElement.scrollTop = 0;
+                if (document.body) document.body.scrollTop = 0;
+            } catch (err) {
+                console.debug('scroll-to-top guard:', err && err.message ? err.message : err)
+            }
+        </script>
+    </head>
+    <body>
+        <div id="root">
+            <!-- Initial loading state shown until React mounts -->
+            <div id="initial-loader" style="
+                position: fixed;
+                inset: 0;
+                background: #0a0e1a;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                z-index: 9999;
+            ">
+                <div style="
+                    width: 48px;
+                    height: 48px;
+                    border: 3px solid rgba(6, 182, 212, 0.2);
+                    border-top-color: #06b6d4;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                "></div>
+                <p style="color: #94a3b8; margin-top: 16px; font-family: system-ui, sans-serif;">Loading...</p>
+            </div>
+            <style>
+                @keyframes spin { to { transform: rotate(360deg); } }
+            </style>
+        </div>
+        <script type="module" src="/src/main.jsx"></script>
+        
+        <!-- React load failure detection -->
+        <script>
+            // If React doesn't mount within 10 seconds, show error
+            window.__reactMounted = false;
+            setTimeout(function() {
+                if (!window.__reactMounted && document.getElementById('initial-loader')) {
+                    var loader = document.getElementById('initial-loader');
+                    loader.innerHTML = '\
+                        <div style="text-align: center; padding: 20px; max-width: 400px;">\
+                            <h2 style="color: #06b6d4; margin-bottom: 16px;">Loading Issue</h2>\
+                            <p style="color: #94a3b8; margin-bottom: 24px; line-height: 1.6;">The page is taking longer than expected. This may be due to cached data.</p>\
+                            <button onclick="clearCacheReload()" style="\
+                                background: linear-gradient(135deg, #06b6d4, #0891b2);\
+                                color: white; border: none; padding: 14px 28px;\
+                                border-radius: 8px; font-size: 16px; font-weight: 600;\
+                                cursor: pointer; margin: 8px;\
+                            ">Clear Cache & Reload</button>\
+                            <button onclick="location.reload(true)" style="\
+                                background: #1e293b; color: white; border: none;\
+                                padding: 14px 28px; border-radius: 8px; font-size: 16px;\
+                                font-weight: 600; cursor: pointer; margin: 8px;\
+                            ">Retry</button>\
+                        </div>';
+                }
+            }, 10000);
+            
+            // Cache clear function
+            async function clearCacheReload() {
+                try {
+                    if ('serviceWorker' in navigator) {
+                        var regs = await navigator.serviceWorker.getRegistrations();
+                        await Promise.all(regs.map(function(r) { return r.unregister(); }));
+                    }
+                    var names = await caches.keys();
+                    await Promise.all(names.map(function(n) { return caches.delete(n); }));
+                    window.location.href = window.location.origin + '?_=' + Date.now();
+                } catch (e) {
+                    window.location.reload(true);
+                }
+            }
+        </script>
+        
+        <!-- Service Worker Registration with Auto-Update -->
+        <script>
+            if ('serviceWorker' in navigator) {
+                var refreshing = false;
+                
+                // Detect controller change and reload page
+                navigator.serviceWorker.addEventListener('controllerchange', function() {
+                    if (!refreshing) {
+                        refreshing = true;
+                        console.log('[SW] New service worker activated, reloading...');
+                        window.location.reload();
+                    }
+                });
+                
+                window.addEventListener('load', function() {
+                    // Check for cache_bust parameter - if present, skip SW registration on first load
+                    var params = new URLSearchParams(window.location.search);
+                    if (params.has('cache_bust') || params.has('_')) {
+                        // Clean up URL without reloading
+                        if (history.replaceState) {
+                            history.replaceState(null, '', window.location.pathname);
+                        }
+                    }
+                    
+                    navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' })
+                        .then(function(registration) {
+                            console.log('[SW] Registered:', registration.scope);
+                            
+                            // Force check for updates on every page load
+                            registration.update();
+                            
+                            // Check for updates every 30 seconds (more frequent)
+                            setInterval(function() {
+                                registration.update();
+                            }, 30000);
+                            
+                            // Listen for updates
+                            registration.addEventListener('updatefound', function() {
+                                var newWorker = registration.installing;
+                                if (newWorker) {
+                                    console.log('[SW] Update found, installing...');
+                                    newWorker.addEventListener('statechange', function() {
+                                        if (newWorker.state === 'installed') {
+                                            if (navigator.serviceWorker.controller) {
+                                                // New version available - auto skip waiting
+                                                console.log('[SW] New version ready, activating...');
+                                                newWorker.postMessage('SKIP_WAITING');
+                                            } else {
+                                                // First install
+                                                console.log('[SW] First install complete');
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        })
+                        .catch(function(err) {
+                            console.warn('[SW] Registration failed:', err);
+                        });
+                });
+            }
+        </script>
+        
+        <!-- Vercel Web Analytics -->
+        <script>
+          window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+        </script>
+        <script defer src="/_vercel/insights/script.js"></script>
+        
+        <!-- Vercel Speed Insights -->
+        <script defer src="/_vercel/speed-insights/script.js"></script>
+        <script>
+          // Disable right-click context menu and common DevTools shortcuts
+          document.addEventListener('contextmenu', function(e){ e.preventDefault(); }, { passive: false });
+          document.addEventListener('keydown', function(e){
+            const k = e.key || ''
+            if (k === 'F12') e.preventDefault();
+            if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(k)) e.preventDefault();
+            if (e.ctrlKey && ['U','u','S','s'].includes(k)) e.preventDefault();
+          });
+        </script>
+    </body>
+</html>

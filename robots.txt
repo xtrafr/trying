@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://nexiumservices.shop/sitemap.xml
+
+# Disallow sensitive directories
+Disallow: /Nexium/hts-cache/
+Disallow: /Nexium/hts-log.txt
+Disallow: /.vercel/
+Disallow: /api/
+
+# Crawl delay
+Crawl-delay: 1 
