@@ -1,0 +1,5 @@
+Contact: mailto:support@nexiumservices.com
+Expires: 2026-01-05T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://nexiumservices.shop/.well-known/security.txt
+Policy: https://nexiumservices.shop/security-policy 
